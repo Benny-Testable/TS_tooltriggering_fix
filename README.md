@@ -223,3 +223,4 @@ This branch carries planted test data so each Testable whitebox metric has somet
 - The platform's old report has 131 metrics. Many were retired in qa and the weights sheet may not list every metric.
 
 All secrets, names and numbers in the test data are invented.
+<!-- dummy PR 2026-11-24 18:17:10 -->
