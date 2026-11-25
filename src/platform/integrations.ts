@@ -41,12 +41,12 @@ export function snapshot(orders: readonly OrderRecord[]): OrderRecord[] {
  * filesystem work at import time.
  */
 export async function describeExportStack(): Promise<Record<string, string>> {
-  const axios = await import("axios");
-  const nodeFetch = await import("node-fetch");
-  const tar = await import("tar");
+  await import("axios");
+  await import("node-fetch");
+  await import("tar");
   return {
-    axios: typeof axios.default === "function" ? "loaded" : "loaded",
-    nodeFetch: typeof nodeFetch.default === "function" ? "loaded" : "loaded",
-    tar: typeof tar.create === "function" ? "loaded" : "loaded",
+    axios: "loaded",
+    nodeFetch: "loaded",
+    tar: "loaded",
   };
 }

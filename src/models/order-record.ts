@@ -58,8 +58,14 @@ export function validateOrder(order: OrderRecord): void {
     throw new OrderValidationError("lines", "order must carry at least one line");
   }
   for (const line of order.lines) {
+    if (!Number.isFinite(line.quantity)) {
+      throw new OrderValidationError("quantity", `quantity must be finite for ${line.sku}`);
+    }
     if (line.quantity <= 0) {
       throw new OrderValidationError("quantity", `quantity must be positive for ${line.sku}`);
+    }
+    if (!Number.isFinite(line.unitPrice)) {
+      throw new OrderValidationError("unitPrice", `unitPrice must be finite for ${line.sku}`);
     }
     if (line.unitPrice < 0) {
       throw new OrderValidationError("unitPrice", `unitPrice must not be negative for ${line.sku}`);

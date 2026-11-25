@@ -55,6 +55,19 @@ describe("order record validation", () => {
     ).to.throw(OrderValidationError, /unitPrice must not be negative/);
   });
 
+  it("rejects non-finite quantities and prices", () => {
+    expect(() =>
+      validateOrder(order({ lines: [{ sku: "SKU-A", quantity: Number.NaN, unitPrice: 10 }] })),
+    ).to.throw(OrderValidationError, /quantity must be finite/);
+    expect(() =>
+      validateOrder(
+        order({
+          lines: [{ sku: "SKU-A", quantity: 1, unitPrice: Number.POSITIVE_INFINITY }],
+        }),
+      ),
+    ).to.throw(OrderValidationError, /unitPrice must be finite/);
+  });
+
   it("validates each line in a multi-line order", () => {
     expect(() =>
       validateOrder(
