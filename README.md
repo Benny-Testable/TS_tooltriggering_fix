@@ -197,3 +197,4 @@ taxonomy metric, with the rule or tool, the evidence and the known platform limi
 | git history `4d98a352`, `fc7d4920` (perf helper, then a `fix:` commit with its test) | churn in performance paths, defect prediction, change impact | churn and fix-style co-change in history |
 <!-- dummy PR 2026-11-25 06:51:53 -->
 <!-- dummy PR 2026-11-25 11:08:31 -->
+<!-- dummy PR 2026-11-25 12:59:43 -->
