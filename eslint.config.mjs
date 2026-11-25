@@ -37,7 +37,7 @@ export default tseslint.config(
       // planted security and performance fixtures: they must stay finding-rich for the Testable scanners
       "src/analysis/sast-fixture.ts", "src/analysis/taint-fixture.ts",
       "src/analysis/sensitive-data-fixture.ts", "src/analysis/secrets-fixture.ts",
-      "src/analysis/perf-fixture.ts", "scripts/cycle-*.cjs",
+      "src/analysis/perf-fixture.ts", "src/analysis/http-entry-fixture.ts", "scripts/cycle-*.cjs",
     ],
   },
   js.configs.recommended,
