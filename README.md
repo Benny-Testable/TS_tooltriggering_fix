@@ -213,12 +213,18 @@ This branch carries planted test data so each Testable whitebox metric has somet
 | Tests that run the planted code | `tests/analysis.spec.ts`, `tests/analysis-extra.spec.ts` | Statement, Branch, Path and Data Flow coverage, Mutation Score | - |
 | Performance tests | `tests/perf/throughput.perf.spec.ts` | Performance Test Code Coverage | - |
 | Git history: five edits to performance and production files with tests, and a fake secret committed then removed (commits `8b540ce`, `6fc2a22`) | git log | Code Churn rows, Code Churn in Performance-Critical Paths, Secrets in Git History | partial |
+| HTTP entry points on a typed local router (`app.get` / `app.post`, `req.query`, `req.params`, `req.body`) | `packages/domain/src/analysis/http-entry-fixture.ts`, `tests/http-entry.spec.ts` | Attack surface / entry points (wb-entry-http: 8 hits) | - |
+| Performance loops with the counter declared before the loop, so the triple-for and push-in-nested-loop rules match | `perf-fixture.ts` | Big-O (nested loop), Memory Allocation in Loop | - |
+| Churn and a fix-style commit on performance code with its test (commits `2a4de748`, `6c11d3da`) | git log, `tests/perf/average-cell.perf.spec.ts` | Code Churn in performance paths, Defect Prediction, Change Impact | - |
+
+The per-metric view (one row per taxonomy metric, with the rule or tool, how each claim was checked and the known platform limits) is in [`docs/metric-data-map.md`](docs/metric-data-map.md).
 
 ### What no repository data can fix
 
 - Test-based metrics (about 45 rows) stay empty if the platform cannot install this Bun repository and run the tests.
 - Secrets in Git History and Secrets in Repo History are not scheduled on a manual run; the platform runs trufflehog weekly.
 - Privileged Access Audit and the SOC 2 settings depend on GitHub settings, not files.
+- Path traversal (`wb-ts-path-traversal`) cannot fire on any code: its `pattern-not: "..."` (semgrep-ruleset.yml line 61) reaches semgrep as an ellipsis that matches every expression.
 - Four Embedded rows (C/C++ only) appear in TypeScript reports because of a platform bug. They have no data.
 - The platform's old report has 131 metrics. Many were retired in qa and the weights sheet may not list every metric.
 
