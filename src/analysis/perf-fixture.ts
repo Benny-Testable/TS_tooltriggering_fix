@@ -95,5 +95,5 @@ export function chunk<T>(items: T[], size: number): T[][] {
 
 /** average value of a cube cell */
 export function averageCell(size: number): number {
-  return size === 0 ? 0 : sumCube(size) / size;
+  return size === 0 ? 0 : sumCube(size) / (size * size * size);
 }
