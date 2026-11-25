@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@orderkit/domain": "workspace:*",
-    "@orderkit/contracts": "workspace:*"
+    "@orderkit/contracts": "workspace:*",
+    "@orderkit/pricing-service": "workspace:*"
   },
   "scripts": {
     "start": "node ../../dist/services/order-service/src/index.js"
