@@ -173,3 +173,25 @@ branch, and the architecture.
 <!-- dummy PR 2026-11-13 09:51:50 -->
 <!-- dummy PR 2026-11-16 09:21:35 -->
 <!-- dummy PR 2026-11-17 08:26:16 -->
+
+## Metric test data map
+
+Data planted so the platform's whitebox metrics have something to measure. The per-metric view (one row per
+taxonomy metric, with the rule or tool, the evidence and the known platform limits) is in
+[`docs/metric-data-map.md`](docs/metric-data-map.md).
+
+| File | Metric(s) | Expected effect |
+|---|---|---|
+| `infra/terraform/main.tf`, `infra/kubernetes/deployment.yaml`, `infra/cloudformation/stack.yaml`, `.checkov.yaml`, `.checkov/policies/*.yaml` | IaC: open firewall rules, unencrypted storage, public storage, CIS benchmark | a non-zero count in each category |
+| `src/analysis/perf-fixture.ts` | Big-O (nested loops), memory allocation in loops, N+1 calls, race conditions | hits for all four perf rule categories (loop counters are declared before the loop so the rules match) |
+| `src/analysis/sast-fixture.ts`, `taint-fixture.ts`, `sensitive-data-fixture.ts` | SAST, input validation, data flow security, access control, attack surface | semgrep findings; no inline `eslint-disable`, the repo's own lint skips them via `eslint.config.mjs` |
+| `src/analysis/http-entry-fixture.ts` | attack surface (HTTP entry points) | `wb-entry-http` hits from `app.get` / `app.post` routes on a typed local router |
+| `src/analysis/sensitive-data-fixture.ts` | PII in log statements | `pii-log-ts-js-contact-auth-student` hits |
+| `src/analysis/student-pii-fixture.ts`, `docs/student-records.md` | PII in codebase | Presidio entities (invented people) |
+| `src/analysis/secrets-fixture.ts`, `.pre-commit-config.yaml` | hardcoded secrets, pre-commit prevention | invented values, no provider key format |
+| `config/legacy-credentials.env` (added in `d29f8a06`, removed in `b94a4a80`) | secrets in git history | one historical secret (trufflehog runs weekly) |
+| `src/analysis/cycle-a.ts`, `cycle-b.ts`, `scripts/cycle-a.cjs`, `cycle-b.cjs` | circular dependency | dependency-cruiser (`.ts`) and madge (`.cjs`) each see one cycle |
+| `package.json`: `left-pad` | unused dependency | knip reports one unused dependency (imported nowhere, not ignored) |
+| `.github/dependabot.yml`, `renovate.json`, `.github/workflows/scheduled-security.yml` | continuous dependency monitoring | monitoring configured |
+| `tests/analysis.spec.ts`, `tests/analysis-extra.spec.ts`, `tests/http-entry.spec.ts`, `tests/perf/*.perf.spec.ts` | coverage, path, branch, data flow, mutation, performance test coverage | the fixtures and services are executed by the test suite |
+| git history `4d98a352`, `fc7d4920` (perf helper, then a `fix:` commit with its test) | churn in performance paths, defect prediction, change impact | churn and fix-style co-change in history |
