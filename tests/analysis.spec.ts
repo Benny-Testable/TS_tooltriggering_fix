@@ -2,11 +2,6 @@ import { expect } from "chai";
 import { classifyOrder, auditTrail, isBulkTier, tierDiscount } from "../packages/domain/src/analysis/complexity-sample";
 import { intakeOrder, reconcile } from "../packages/domain/src/analysis/call-graph-sample";
 import {
-  settleLegacyInvoice,
-  unreachableAfterReturn,
-  LEGACY_TAX_TABLE,
-} from "../packages/domain/src/analysis/dead-code";
-import {
   looseCompare,
   swallowsEverything,
   shadowing,
@@ -98,19 +93,9 @@ describe("analysis fixtures: audit trail and call graph", () => {
   });
 });
 
-describe("analysis fixtures: dead code and lint fixtures", () => {
-  it("settles a legacy invoice per channel", () => {
-    expect(settleLegacyInvoice(100, "retail")).to.equal(107);
-    expect(settleLegacyInvoice(100, "wholesale")).to.equal(105);
-    expect(LEGACY_TAX_TABLE["legacy-retail"]).to.equal(0.07);
-  });
-
-  it("returns the value for a positive input and zero otherwise", () => {
-    expect(unreachableAfterReturn(5)).to.equal(5);
-    expect(unreachableAfterReturn(0)).to.equal(0);
-    expect(unreachableAfterReturn(-3)).to.equal(0);
-  });
-
+// packages/domain/src/analysis/dead-code.ts is deliberately NOT imported by any test: its exports must stay
+// unused for ts-prune, knip and the Dead Code Detection rows.
+describe("analysis fixtures: lint fixtures", () => {
   it("compares loosely", () => {
     expect(looseCompare(1, "1")).to.equal(true);
     expect(looseCompare(1, 2)).to.equal(false);

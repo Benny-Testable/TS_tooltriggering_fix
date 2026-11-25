@@ -27,7 +27,6 @@ export function matchSku(pattern: string, sku: string): boolean {
 
 /** security/detect-eval-with-expression */
 export function evaluateRule(expression: string): unknown {
-  // eslint-disable-next-line no-eval
   return eval(expression);
 }
 

@@ -1,16 +1,24 @@
 /**
  * Planted performance anti-patterns for the semgrep-perf-static rules
  * (shared/whitebox/analyzer-assets/shared/semgrep-perf-static.yaml). One function per category:
- * n_plus_one, nested_loop, alloc_in_loop, concurrency. The functions are real code but are
- * never called by the app; they exist so the performance static-analysis rows have hits.
+ * n_plus_one, nested_loop, alloc_in_loop, concurrency. The functions are real code and are run
+ * by tests/analysis-extra.spec.ts and tests/perf/throughput.perf.spec.ts.
+ *
+ * The classic loops declare their counter BEFORE the loop (`let x: number; for (x = 0; ...)`).
+ * The rules match `for ($A = $B; $C; $D)`, an assignment in the loop header; a declaration in the
+ * header (`for (let x = 0; ...)`) does not match it, so those loops produced no Big-O or memory
+ * allocation hits. Checked with semgrep 1.173 against the rule pack.
  */
 
-/** nested_loop: three nested for statements */
+/** nested_loop (testable.perf.ts-triple-for): three nested classic for statements */
 export function buildCube(size: number): number[] {
   const cells: number[] = [];
-  for (let x = 0; x < size; x++) {
-    for (let y = 0; y < size; y++) {
-      for (let z = 0; z < size; z++) {
+  let x: number;
+  let y: number;
+  let z: number;
+  for (x = 0; x < size; x++) {
+    for (y = 0; y < size; y++) {
+      for (z = 0; z < size; z++) {
         cells[x * size * size + y * size + z] = x + y + z;
       }
     }
@@ -18,18 +26,20 @@ export function buildCube(size: number): number[] {
   return cells;
 }
 
-/** alloc_in_loop: array push inside nested for loops */
+/** alloc_in_loop (testable.perf.ts-push-nested-loop): array push inside two nested classic for loops */
 export function pairUp(left: number[], right: number[]): Array<[number, number]> {
   const pairs: Array<[number, number]> = [];
-  for (let i = 0; i < left.length; i++) {
-    for (let j = 0; j < right.length; j++) {
+  let i: number;
+  let j: number;
+  for (i = 0; i < left.length; i++) {
+    for (j = 0; j < right.length; j++) {
       pairs.push([left[i] as number, right[j] as number]);
     }
   }
   return pairs;
 }
 
-/** n_plus_one: one network call per element of the loop */
+/** n_plus_one (testable.perf.ts-fetch-in-for-await): one network call per element, for...of */
 export async function loadPrices(skus: string[]): Promise<string[]> {
   const bodies: string[] = [];
   for (const sku of skus) {
@@ -42,14 +52,15 @@ export async function loadPrices(skus: string[]): Promise<string[]> {
 /** n_plus_one: classic for loop variant */
 export async function loadStock(skus: string[]): Promise<number> {
   let total = 0;
-  for (let i = 0; i < skus.length; i++) {
+  let i: number;
+  for (i = 0; i < skus.length; i++) {
     const response = await fetch("https://stock.internal.example/api/stock/" + skus[i]);
     total += Number(await response.text());
   }
   return total;
 }
 
-/** concurrency: shared array and object mutated inside parallel Promise.all callbacks */
+/** concurrency (testable.perf.ts-shared-mutation-async): shared array and object mutated inside Promise.all */
 export async function collectTotals(items: number[]): Promise<{ list: number[]; sum: number }> {
   const list: number[] = [];
   const shared = { sum: 0 };
@@ -81,3 +92,4 @@ export function chunk<T>(items: T[], size: number): T[][] {
   }
   return groups;
 }
+
