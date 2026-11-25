@@ -196,3 +196,4 @@ taxonomy metric, with the rule or tool, the evidence and the known platform limi
 | `tests/analysis.spec.ts`, `tests/analysis-extra.spec.ts`, `tests/http-entry.spec.ts`, `tests/perf/*.perf.spec.ts` | coverage, path, branch, data flow, mutation, performance test coverage | the fixtures and services are executed by the test suite |
 | git history `4d98a352`, `fc7d4920` (perf helper, then a `fix:` commit with its test) | churn in performance paths, defect prediction, change impact | churn and fix-style co-change in history |
 <!-- dummy PR 2026-11-25 06:51:53 -->
+<!-- dummy PR 2026-11-25 11:08:31 -->
