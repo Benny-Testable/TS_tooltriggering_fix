@@ -34,6 +34,10 @@ export default tseslint.config(
     ignores: [
       "dist/**", "build/**", "reports/**", "coverage/**", "coverage-nyc/**",
       "coverage-vitest/**", "node_modules/**", ".yarn/**", "**/*.d.ts",
+      // planted security and performance fixtures: they must stay finding-rich for the Testable scanners
+      "src/analysis/sast-fixture.ts", "src/analysis/taint-fixture.ts",
+      "src/analysis/sensitive-data-fixture.ts", "src/analysis/secrets-fixture.ts",
+      "src/analysis/perf-fixture.ts", "scripts/cycle-*.cjs",
     ],
   },
   js.configs.recommended,

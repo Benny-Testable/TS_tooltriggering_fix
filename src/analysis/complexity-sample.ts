@@ -83,3 +83,15 @@ function stampChecksum(id: string): string {
 }
 function stampTimestamp(): string { return `ts:${new Date(0).toISOString()}`; }
 function stampRegion(region: string): string { return `region:${region}`; }
+
+/** true for the tiers that get bulk pricing */
+export function isBulkTier(tier: string): boolean {
+  return tier === "gold" || tier === "silver";
+}
+
+/** flat discount per tier */
+export function tierDiscount(tier: string): number {
+  if (tier === "gold") return 0.15;
+  if (tier === "silver") return 0.1;
+  return 0;
+}

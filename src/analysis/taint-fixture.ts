@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * Planted taint fixture -- FOUR reachable source-to-sink flows and ONE
  * sanitised control.

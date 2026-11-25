@@ -1,9 +1,9 @@
-/* eslint-disable */
 /**
  * Planted SAST fixture for eslint-plugin-security 2.1.1.
- * Each function below trips one named rule. The runner defeats the file-level
- * disable with --no-inline-config, exactly as the Ruff runner in the Python
- * family uses --ignore-noqa.
+ * Each function below trips one named rule. The file-level eslint-disable that used to
+ * sit above this comment is removed: the Testable ts-eslint-security run does not
+ * pass --no-inline-config, so it would hide every finding. The repository's own
+ * lint run skips this file (eslint.config.mjs ignores).
  */
 import { execSync } from "child_process";
 import * as fs from "fs";
@@ -27,7 +27,6 @@ export function matchSku(pattern: string, sku: string): boolean {
 
 /** security/detect-eval-with-expression */
 export function evaluateRule(expression: string): unknown {
-  // eslint-disable-next-line no-eval
   return eval(expression);
 }
 
