@@ -67,6 +67,15 @@ describe("OrderService", () => {
     expect(result.failures[0].field).to.equal("quantity");
   });
 
+  it("returns empty results when priceAll receives no orders", () => {
+    expect(new OrderService().priceAll([])).to.deep.equal({ priced: [], failures: [] });
+  });
+
+  it("rethrows non-validation failures from priceAll", () => {
+    const malformed = { ...order(), lines: null } as unknown as OrderRecord;
+    expect(() => new OrderService().priceAll([malformed])).to.throw(TypeError);
+  });
+
   it("counts processed orders", () => {
     const service = new OrderService();
     service.price(order({ id: "A" }));

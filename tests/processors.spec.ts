@@ -41,6 +41,15 @@ describe("channel processors (the duplication fixture pair)", () => {
     expect(p.summarise().count).to.equal(1);
   });
 
+  it("uses a default order service when no service is supplied", () => {
+    const retail = new RetailOrderProcessor();
+    const wholesale = new WholesaleOrderProcessor();
+    expect(retail.process([BOOK[0]])).to.have.length(1);
+    expect(wholesale.process([BOOK[1]])).to.have.length(1);
+    expect(retail.summarise().count).to.equal(1);
+    expect(wholesale.summarise().count).to.equal(1);
+  });
+
   it("both summarise to the same shape -- they are structural twins", () => {
     const r = new RetailOrderProcessor(new OrderService());
     const w = new WholesaleOrderProcessor(new OrderService());
@@ -55,5 +64,41 @@ describe("channel processors (the duplication fixture pair)", () => {
     p.reset();
     expect(p.summarise().count).to.equal(0);
     expect(p.summarise().gross).to.equal(0);
+  });
+
+  it("skips empty input and counts zero-value retail orders as rejected", () => {
+    const p = new RetailOrderProcessor(new OrderService());
+    expect(p.process([])).to.deep.equal([]);
+    expect(
+      p.process([
+        {
+          ...BOOK[0],
+          lines: [{ sku: "FREE", quantity: 1, unitPrice: 0 }],
+        },
+      ]),
+    ).to.deep.equal([]);
+    expect(p.summarise()).to.deep.equal({ count: 0, gross: 0, net: 0, rejected: 1 });
+  });
+
+  it("skips empty input and counts zero-value wholesale orders as rejected", () => {
+    const p = new WholesaleOrderProcessor(new OrderService());
+    expect(p.process([])).to.deep.equal([]);
+    expect(
+      p.process([
+        {
+          ...BOOK[1],
+          lines: [{ sku: "FREE", quantity: 1, unitPrice: 0 }],
+        },
+      ]),
+    ).to.deep.equal([]);
+    expect(p.summarise()).to.deep.equal({ count: 0, gross: 0, net: 0, rejected: 1 });
+  });
+
+  it("reset clears wholesale accepted and rejected state", () => {
+    const p = new WholesaleOrderProcessor(new OrderService());
+    p.process([BOOK[1]]);
+    p.process([{ ...BOOK[1], lines: [{ sku: "FREE", quantity: 1, unitPrice: 0 }] }]);
+    p.reset();
+    expect(p.summarise()).to.deep.equal({ count: 0, gross: 0, net: 0, rejected: 0 });
   });
 });

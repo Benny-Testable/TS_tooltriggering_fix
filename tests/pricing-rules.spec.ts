@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { discountRate, volumeBonus, effectiveRate } from "../src/services/pricing-rules";
 import { taxRateFor, applyTax, round2 } from "../src/models/tax-table";
+import type { Channel } from "../src/models/order-record";
 
 describe("pricing rules", () => {
   it("maps every tier to its rate", () => {
@@ -21,10 +22,16 @@ describe("pricing rules", () => {
     expect(effectiveRate("gold", 500)).to.equal(0.2);
   });
 
+  it("leaves combined rates below the cap unchanged", () => {
+    expect(effectiveRate("standard", 1)).to.equal(0);
+    expect(effectiveRate("bronze", 25)).to.equal(0.04);
+  });
+
   it("knows the tax rate per channel", () => {
     expect(taxRateFor("retail")).to.equal(0.0825);
     expect(taxRateFor("wholesale")).to.equal(0.0625);
     expect(taxRateFor("partner")).to.equal(0);
+    expect(taxRateFor("future-channel" as Channel)).to.equal(0);
   });
 
   it("rounds to two places away from float error", () => {
